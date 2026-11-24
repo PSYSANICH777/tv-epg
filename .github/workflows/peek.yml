@@ -1,0 +1,19 @@
+name: peek-it999
+on:
+  push:
+    branches: [upscale]
+jobs:
+  peek:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          for t in edem_epg_ico3 edem_epg_ico2 edem_epg_ico; do
+            curl -s -m 30 -o $t.m3u8 "http://epg.it999.ru/$t.m3u8"; echo "== $t $(wc -l < $t.m3u8) lines"
+            echo "EXTVLCOPT: $(grep -ci extvlcopt $t.m3u8)  EXTHTTP: $(grep -ci exthttp $t.m3u8)  KODIPROP: $(grep -ci kodiprop $t.m3u8)"
+          done
+          echo "== israel news (ico3)"
+          grep -n -i -A2 -E 'Кан 11|Kan 11|Кешет|Keshet|Решет|Reshet|i24|Канал 14|14 канал|Channel 14|Кнессет|Knesset|9 канал|Канал 9|Израиль Плюс|13 канал|12 канал|11 канал' edem_epg_ico3.m3u8 | sed 's#/00000000000000/#/KEY/#' | head -80
+          echo "== groups"
+          grep -o 'group-title="[^"]*"' edem_epg_ico3.m3u8 | sort | uniq -c | sort -rn | head -40
+          echo "== url patterns"
+          grep -v '^#' edem_epg_ico3.m3u8 | sed -E 's#[0-9]+#N#g' | sort | uniq -c | sort -rn | head
