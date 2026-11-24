@@ -8,7 +8,7 @@ jobs:
     steps:
       - run: |
           for t in edem_epg_ico3 edem_epg_ico2 edem_epg_ico; do
-            curl -s -m 30 -o $t.m3u8 "http://epg.it999.ru/$t.m3u8"; echo "== $t $(wc -l < $t.m3u8) lines"
+            curl -sL -m 30 -o $t.m3u8 -w "%{url_effective} %{http_code}\n" "http://epg.it999.ru/$t.m3u8"; echo "== $t $(wc -l < $t.m3u8) lines"
             echo "EXTVLCOPT: $(grep -ci extvlcopt $t.m3u8)  EXTHTTP: $(grep -ci exthttp $t.m3u8)  KODIPROP: $(grep -ci kodiprop $t.m3u8)"
           done
           echo "== israel news (ico3)"
